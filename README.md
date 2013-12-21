@@ -1,4 +1,4 @@
-TWitchDownloader.py
+TwitchDownloader.py
 ===================
 
 Basic Twitch.tv VOD downloader
