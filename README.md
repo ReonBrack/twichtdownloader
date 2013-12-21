@@ -3,6 +3,11 @@ TWitchDownloader.py
 
 Basic Twitch.tv VOD downloader
 
+Features
+--------
+
+Automates the downloading process of the Twitch Video Downloader webapp
+
 TODO
 ----
 
