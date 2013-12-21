@@ -7,12 +7,12 @@ from bs4 import BeautifulSoup
 
 
 #functions
-def grabbing_links():
-	videos_link = raw_input("Link please: ")
-	html = urllib2.Request(videos_link)
-	soup = BeautifulSoup(html)
-	link_list = ''
-	for a in soup.find_all('a', href=True):
+def grab_links():
+	url = raw_input("Link please: ")
+	page = page=urllib2.urlopen(url)
+	soup = BeautifulSoup(page.read())
+	link_list = []
+	for a in soup.findAll('a', href=True):
 		link_list.append(a)
 		print a
 	return link_list
@@ -44,7 +44,7 @@ def download():
 		f.close()
 
 #start
-list = grabbing_links()
+list = grab_links()
 for item in list:
 	print item
 print "done"
