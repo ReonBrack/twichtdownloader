@@ -1,12 +1,22 @@
 #imports
 import urllib2
 import sys
+import os
 from bs4 import BeautifulSoup 
 
 #globals
 
 
 #functions
+def prepare():
+	print "Preparing..."
+	output_path = "~/TwitchVideos/"
+	folder_name = raw_input("Folder name? ")
+	output_path = output_path + folder_name
+	if os.path.exists(output_path) is False:
+		os.makedirs(output_path)
+		print "Folder " + output_path + " has been created..." 	
+
 def grab_links():
 	url = raw_input("Link please: ")
 	page = page=urllib2.urlopen(url)
@@ -16,7 +26,7 @@ def grab_links():
 		link_list.append(a['href'])
 	return link_list
 
-def download():
+def download(parts):
 	for url in parts:
 		file_name = url.split('/')[-1]
 		u = urllib2.urlopen(url)
@@ -43,7 +53,6 @@ def download():
 		f.close()
 
 #start
+prepare()
 list = grab_links()
-for item in list:
-	print item
-print "done"
+download(list)
