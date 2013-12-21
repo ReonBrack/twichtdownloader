@@ -2,6 +2,8 @@
 import urllib2
 import sys
 import os
+import time
+from progressbar import ProgressBar, Percentage, Bar
 from bs4 import BeautifulSoup 
 
 #globals
@@ -10,12 +12,14 @@ from bs4 import BeautifulSoup
 #functions
 def prepare():
 	print "Preparing..."
-	output_path = "~/TwitchVideos/"
+	path_base = "~/TwitchVideos/"
 	folder_name = raw_input("Folder name? ")
-	output_path = output_path + folder_name
-	if os.path.exists(output_path) is False:
-		os.makedirs(output_path)
-		print "Folder " + output_path + " has been created..." 	
+	output_path = path_base + folder_name
+	if os.path.isdir(output_path) is False:
+		os.makedirs(os.path.expanduser(output_path))
+		print "Folder " + output_path + " has been created..."
+	else:
+		print "Folder already exists..." 	
 
 def grab_links():
 	url = raw_input("Link please: ")
@@ -26,33 +30,38 @@ def grab_links():
 		link_list.append(a['href'])
 	return link_list
 
-def download(parts):
-	for url in parts:
-		file_name = url.split('/')[-1]
-		u = urllib2.urlopen(url)
-		f = open(file_name, 'wb')
-		meta = u.info()
-		file_size = int(meta.getheaders("Content-Length")[0])
-		print "Downloading: %s Bytes: %s" % (file_name, file_size)
+def download(list):
+	i = 1
+	total = len(list)
+	for video in list:
+		print "Downloading part " +str(i)+ " of " + str(total)
+		download_video(video)
+		i = i+1
 
-		file_size_dl = 0
-		block_sz = 8192
-		while True:
-			buffer = u.read(block_sz)
-			if not buffer:
-				break
+def download_video(url):
+	file_name = url.split('/')[-1]
+	u = urllib2.urlopen(url)
+	f = open(file_name, 'wb')
+	meta = u.info()
+	file_size = int(meta.getheaders("Content-Length")[0])
+	file_size_dl = 0
+	block_sz = 8192
+	
+	pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=file_size).start()
+	
+	while True:
+		buffer = u.read(block_sz)
+		if not buffer:
+			break
+		
+		file_size_dl += len(buffer)
+		f.write(buffer)
+		time.sleep(0.01)
+		pbar.update(file_size_dl+1)
 
-			file_size_dl += len(buffer)
-			f.write(buffer)
-			status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-			status = status
-			print status
-			print ""
-
-
-		f.close()
+	f.close()
 
 #start
-prepare()
+#prepare()
 list = grab_links()
 download(list)
