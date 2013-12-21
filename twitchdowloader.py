@@ -13,8 +13,7 @@ def grab_links():
 	soup = BeautifulSoup(page.read())
 	link_list = []
 	for a in soup.findAll('a', href=True):
-		link_list.append(a)
-		print a
+		link_list.append(a['href'])
 	return link_list
 
 def download():
