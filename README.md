@@ -6,7 +6,7 @@ Basic Twitch.tv VOD downloader
 Features
 --------
 
-Automates the downloading process of the Twitch Video Downloader webapp
+Automates the downloading process of the Twitch Video Downloader webapp (http://download.twitchapps.com/)
 
 TODO
 ----
