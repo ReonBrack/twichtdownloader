@@ -1,3 +1,8 @@
+# TODO
+# Overall progressbar
+# Addition Info of the VOD (eg. total size and length)
+# Skip the need to surf to "http://download.twitchapps.com" and make use of the parameters
+
 #imports
 import urllib2
 import sys
@@ -7,19 +12,30 @@ from progressbar import ProgressBar, Percentage, Bar
 from bs4 import BeautifulSoup 
 
 #globals
-
+path_base = os.path.expanduser("~/TwitchVideos/")
+output_path = ''
 
 #functions
-def prepare():
-	print "Preparing..."
-	path_base = "~/TwitchVideos/"
-	folder_name = raw_input("Folder name? ")
+def display_folders(): #TODO split function
+	list = os.listdir(path_base)
+	print "Choose a folder (0 - {})...".format(len(list))
+	print "0. New Folder"
+	for i in range(0, len(list)):
+		print "{}. {}".format(i+1, list[i])
+	option = input("What folder? ")
+	if option == 0:
+		folder_name = raw_input("Folder name? ")
+		new_folder(folder_name)
+	else:
+		output_path = path_base + list[option-1]
+		print "Folder {} selected...".format(output_path)
+		
+		
+def new_folder(folder_name):
 	output_path = path_base + folder_name
 	if os.path.isdir(output_path) is False:
-		os.makedirs(os.path.expanduser(output_path))
-		print "Folder " + output_path + " has been created..."
-	else:
-		print "Folder already exists..." 	
+		os.makedirs(output_path)
+		print "Folder " + output_path + " has been created..."		
 
 def grab_links():
 	url = raw_input("Link please: ")
@@ -41,7 +57,7 @@ def download(list):
 def download_video(url):
 	file_name = url.split('/')[-1]
 	u = urllib2.urlopen(url)
-	f = open(file_name, 'wb')
+	f = open((output_path + file_name), 'wb')
 	meta = u.info()
 	file_size = int(meta.getheaders("Content-Length")[0])
 	file_size_dl = 0
@@ -57,11 +73,18 @@ def download_video(url):
 		file_size_dl += len(buffer)
 		f.write(buffer)
 		time.sleep(0.01)
-		pbar.update(file_size_dl+1)
+		pbar.update(file_size_dl)
 
 	f.close()
+	print ""
 
+def intro():
+	print "Welcome to ReonBrack's TwitchVideo Downloader!"
+	print "Go to http://download.twitchapps.com/ type in the Channel Name, click view, click the download button next to the VOD you want to download en provide the script with the link to the popup window!"
+	print "This script will download all the parts for you in the location that you want!"
+	
 #start
-#prepare()
+intro()
+display_folders()
 list = grab_links()
 download(list)
